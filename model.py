@@ -61,8 +61,8 @@ def build_lstm(args):
     model.add(TimeDistributed(Flatten()))
     model.add(TimeDistributed(Dropout(args.keep_prob)))
     model.add(TimeDistributed(Dense(units=32,   activation='relu')))
-    model.add(RNN(LSTM(8))
-    model.add(TimeDistributed(Dense(1))
+    model.add(LSTM(8))
+    model.add(TimeDistributed(Dense(1)))
     model.summary()
 
     return model
@@ -77,8 +77,8 @@ def build_rnn(args):
     model.add(TimeDistributed(Flatten()))
     model.add(TimeDistributed(Dropout(args.keep_prob)))
     model.add(TimeDistributed(Dense(units=32,   activation='relu')))
-    model.add(RNN(SimpleRNN(8))
-    model.add(TimeDistributed(Dense(1))
+    model.add(SimpleRNN(8))
+    model.add(TimeDistributed(Dense(1)))
     model.summary()
 
     return model

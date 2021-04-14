@@ -45,12 +45,20 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
     """
     Train the model
     """
-    checkpoint = ModelCheckpoint(args.model + '-model-{epoch:03d}.h5',
+    # Define checkpoint callback to save weights
+    checkpoint = ModelCheckpoint(args.model + '-model-epoch-{epoch:03d}-valloss-{val_loss:03d}.h5',
                                  monitor='val_loss',
                                  verbose=0,
                                  save_best_only=args.save_best_only,
                                  mode='auto')
-
+    
+    # Try to load checkpoint weights
+    if len(args.checkpoint) != 0:
+        try:
+            model.load_weights(args.checkpoint)
+        except:
+            print("Invalid checkpoint path. Please try again.")
+    
     model.compile(loss='mean_squared_error', optimizer=Adam(lr=args.learning_rate))
     model.fit(x=batch_generator(args.data_dir, X_train, y_train, args.batch_size, True),
               steps_per_epoch=args.samples_per_epoch,
@@ -84,6 +92,7 @@ def main():
     parser.add_argument('-o', help='save best models only', dest='save_best_only',    type=s2b,   default='true')
     parser.add_argument('-l', help='learning rate',         dest='learning_rate',     type=float, default=1.0e-4)
     parser.add_argument('-m', help='model architecture',    dest='model',             type=str,   default="PilotNet", choices=["PilotNet", "SmallConvNet"])
+    parser.add_argument('-c', help='load checkpoint',       dest='checkpoint',        type=str,   default="")
     args = parser.parse_args()
 
     print('-' * 30)
