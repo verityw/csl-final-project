@@ -38,10 +38,9 @@ def build_smallconvnet(args):
     """
     model = Sequential()
     model.add(Lambda(lambda x: x/127.5-1.0, input_shape=INPUT_SHAPE))
-    model.add(Conv2D(16, 5, 2, activation='elu'))
-    model.add(Conv2D(32, 5, 2, activation='elu'))
-    model.add(Conv2D(48, 3, 1, activation='elu'))
-    model.add(Conv2D(64, 3, 1, activation='elu'))
+    model.add(Conv2D(16, 5, 3, activation='elu'))
+    model.add(Conv2D(32, 5, 3, activation='elu'))
+    model.add(Conv2D(48, 5, 2, activation='elu'))
     model.add(Dropout(args.keep_prob))
     model.add(Flatten())
     model.add(Dense(100, activation='elu'))
