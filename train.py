@@ -46,7 +46,7 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
     Train the model
     """
     # Define checkpoint callback to save weights
-    checkpoint = ModelCheckpoint(args.model + '-model-epoch-{epoch:03d}-valloss-{val_loss:03d}.h5',
+    checkpoint = ModelCheckpoint(args.model + '-model-epoch-{epoch:03d}-valloss-{val_loss:03f}.h5',
                                  monitor='val_loss',
                                  verbose=0,
                                  save_best_only=args.save_best_only,
