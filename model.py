@@ -69,9 +69,9 @@ def build_rnn(args):
     "Build RNN (fully connected recurrency)"
     model = Sequential()
     model.add(TimeDistributed(Lambda(lambda x: x/127.5-1.0, input_shape=INPUT_SHAPE)))
-    model.add(Conv2D(16, 5, 2, activation='elu'))
-    model.add(Conv2D(32, 3, 2, activation='elu'))
-    model.add(Conv2D(64, 3, 1, activation='elu'))
+    model.add(Conv2D(16, 5, 2, activation='relu'))
+    model.add(Conv2D(32, 3, 2, activation='relu'))
+    model.add(Conv2D(64, 3, 1, activation='relu'))
     model.add(TimeDistributed(Flatten()))
     model.add(TimeDistributed(Dropout(args.keep_prob)))
     model.add(TimeDistributed(Dense(units=32,   activation='relu')))
