@@ -5,7 +5,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.layers import Lambda, Conv2D, MaxPooling2D, Dropout, Dense, Flatten
-from utils import INPUT_SHAPE, batch_generator
+from utils import INPUT_SHAPE, batch_generator, recurrent_batch_generator
 import argparse
 import os
 import model
@@ -47,27 +47,41 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
     """
     # Define checkpoint callback to save weights
     checkpoint = ModelCheckpoint(args.model + '-model-epoch-{epoch:03d}-valloss-{val_loss:03f}.h5',
-                                 monitor='val_loss',
-                                 verbose=0,
-                                 save_best_only=args.save_best_only,
-                                 mode='auto')
-    
+                                    monitor='val_loss',
+                                    verbose=0,
+                                    save_best_only=args.save_best_only,
+                                    mode='auto')
+        
     # Try to load checkpoint weights
     if len(args.checkpoint) != 0:
         try:
             model.load_weights(args.checkpoint)
         except:
             print("Invalid checkpoint path. Please try again.")
-    
+
     model.compile(loss='mean_squared_error', optimizer=Adam(lr=args.learning_rate))
-    model.fit(x=batch_generator(args.data_dir, X_train, y_train, args.batch_size, True),
-              steps_per_epoch=args.samples_per_epoch,
-              epochs=args.nb_epoch,
-              max_queue_size=1,
-              validation_data=batch_generator(args.data_dir, X_valid, y_valid, args.batch_size, False),
-              validation_steps=len(X_valid),
-              callbacks=[checkpoint],
-              verbose=1)
+
+    if args.model in ["RNN", "LSTM"]:
+        # Train RNN
+        model.fit(x=recurrent_batch_generator(args.data_dir, X_train, y_train, args.batch_size, True),
+                steps_per_epoch=args.samples_per_epoch,
+                epochs=args.nb_epoch,
+                max_queue_size=1,
+                validation_data=recurrent_batch_generator(args.data_dir, X_valid, y_valid, args.batch_size, False),
+                validation_steps=len(X_valid),
+                callbacks=[checkpoint],
+                verbose=1)
+        
+    else:
+        # Train CNN
+        model.fit(x=batch_generator(args.data_dir, X_train, y_train, args.batch_size, True),
+                steps_per_epoch=args.samples_per_epoch,
+                epochs=args.nb_epoch,
+                max_queue_size=1,
+                validation_data=batch_generator(args.data_dir, X_valid, y_valid, args.batch_size, False),
+                validation_steps=len(X_valid),
+                callbacks=[checkpoint],
+                verbose=1)
 
 
 def s2b(s):

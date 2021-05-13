@@ -45,12 +45,15 @@ def preprocess(image):
     return image
 
 
-def choose_image(data_dir, center, left, right, steering_angle):
+def choose_image(data_dir, center, left, right, steering_angle, choice=-1):
     """
     Randomly choose an image from the center, left or right, and adjust
     the steering angle.
     """
-    choice = np.random.choice(3)
+    if choice == -1:
+        # If choice is -1, then randomly choose the image
+        choice = np.random.choice(3)
+
     if choice == 0:
         return load_image(data_dir, left), steering_angle + 0.2
     elif choice == 1:
@@ -120,12 +123,12 @@ def random_brightness(image):
     return cv2.cvtColor(hsv, cv2.COLOR_HSV2RGB)
 
 
-def augument(data_dir, center, left, right, steering_angle, range_x=100, range_y=10):
+def augument(data_dir, center, left, right, steering_angle, range_x=100, range_y=10, choice = -1):
     """
     Generate an augumented image and adjust steering angle.
     (The steering angle is associated with the center image)
     """
-    image, steering_angle = choose_image(data_dir, center, left, right, steering_angle)
+    image, steering_angle = choose_image(data_dir, center, left, right, steering_angle, choice=choice)
     image, steering_angle = random_flip(image, steering_angle)
     image, steering_angle = random_translate(image, steering_angle, range_x, range_y)
     image = random_shadow(image)
@@ -157,3 +160,24 @@ def batch_generator(data_dir, image_paths, steering_angles, batch_size, is_train
                 break
         yield images, steers
 
+def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size, is_training, sequence_len=16):
+    images = np.empty([batch_size, sequence_len, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
+    steers = np.empty([batch_size,sequence_len])
+    while True:
+        i = 0
+        # Randomly choose if entire sequence will be center, left, or right
+        choice = np.np.random.choice(3)
+        for index in np.random.permutation(image_paths.shape[0] - (sequence_len - 1)):
+            for j in range(sequence_len):
+                center, left, right = image_paths[index + j]
+                steering_angle = steering_angles[index + j]
+                if is_training and np.random.rand() < 0.6:
+                    image, steering_angle = augument(data_dir, center, left, right, steering_angle, choice=choice)
+                else:
+                    image = load_image(data_dir, center)
+                    images[i, j] = preprocess(image)
+                    steers[i, j] = steering_angle
+            i += 1
+            if i == batch_size:
+                break
+        yield images, steers

@@ -20,8 +20,7 @@ import utils
 sio = socketio.Server()
 app = Flask(__name__)
 model = None
-prev_image_array = None
-
+# prev_image_array = None # This was in the original code. Don't know what it does. Gonna use the variable for storing previous images when recurrent.
 MAX_SPEED = 25
 MIN_SPEED = 10
 
@@ -49,6 +48,9 @@ def telemetry(sid, data):
             image = np.asarray(image)       # from PIL image to numpy array
             image = utils.preprocess(image) # apply the preprocessing
             image = np.array([image])       # the model expects 4D array
+
+            # add image to buffer
+            # TO DO
 
             # predict the steering angle for the image
             steering_angle = float(model.predict(image, batch_size=1))
@@ -108,8 +110,18 @@ if __name__ == '__main__':
         nargs='?',
         default='',
         help='Path to image folder. This is where the images from the run will be saved.'
+<<<<<<< HEAD
+    )
+    # parser.add_argument(
+    #     'is_rnn',
+    #     type=bool,
+    #     nargs='?',
+    #     help='Whether or not the loaded model is an RNN'
+    # )
+=======
     )    
     
+>>>>>>> b2120334d6eb6efb7d2456a380314ff93f32c8a8
     args = parser.parse_args()
     print(args.model)
     model = load_model(args.model)
