@@ -162,13 +162,13 @@ def batch_generator(data_dir, image_paths, steering_angles, batch_size, is_train
                 break
         yield images, steers
 
-def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size, is_training, ):
+def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size, is_training):
     images = np.empty([batch_size, sequence_len, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
     steers = np.empty([batch_size,sequence_len])
     while True:
         i = 0
         # Randomly choose if entire sequence will be center, left, or right
-        choice = np.np.random.choice(3)
+        choice = np.random.choice(3)
         for index in np.random.permutation(image_paths.shape[0] - (sequence_len - 1)):
             for j in range(sequence_len):
                 center, left, right = image_paths[index + j]
