@@ -4,7 +4,9 @@ import matplotlib.image as mpimg
 
 
 IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS = 160, 320, 3
+sequence_len = 16
 INPUT_SHAPE = (IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS)
+REC_INPUT_SHAPE = (sequence_len, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS)
 
 
 def load_image(data_dir, image_file):
@@ -160,7 +162,7 @@ def batch_generator(data_dir, image_paths, steering_angles, batch_size, is_train
                 break
         yield images, steers
 
-def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size, is_training, sequence_len=16):
+def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size, is_training, ):
     images = np.empty([batch_size, sequence_len, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
     steers = np.empty([batch_size,sequence_len])
     while True:
