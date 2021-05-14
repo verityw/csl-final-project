@@ -40,18 +40,11 @@ def build_smallconvnet(args):
     model.add(Lambda(lambda x: x/127.5-1.0, input_shape=INPUT_SHAPE))
     model.add(Conv2D(16, 5, 3, activation='elu'))
     model.add(Conv2D(24, 5, 3, activation='elu'))
-<<<<<<< HEAD
     model.add(Conv2D(32, 5, 3, activation='elu'))
     model.add(Conv2D(32, 3, 2, activation='elu'))
     model.add(Dropout(args.keep_prob))
     model.add(Flatten())
     model.add(Dense(8, activation='elu'))
-=======
-    model.add(Conv2D(24, 5, 3, activation='elu'))
-    model.add(Dropout(args.keep_prob))
-    model.add(Flatten())
-    model.add(Dense(10, activation='elu'))
->>>>>>> b2120334d6eb6efb7d2456a380314ff93f32c8a8
     model.add(Dense(1))
     model.summary()
 
@@ -77,15 +70,9 @@ def build_rnn(args):
     "Build RNN (fully connected recurrency)"
     model = Sequential()
     model.add(TimeDistributed(Lambda(lambda x: x/127.5-1.0, input_shape=INPUT_SHAPE)))
-<<<<<<< HEAD
     model.add(TimeDistributed(Conv2D(16, 5, 2, activation='elu')))
     model.add(TimeDistributed(Conv2D(32, 3, 2, activation='elu')))
     model.add(TimeDistributed(Conv2D(64, 3, 1, activation='elu')))
-=======
-    model.add(Conv2D(16, 5, 2, activation='relu'))
-    model.add(Conv2D(32, 3, 2, activation='relu'))
-    model.add(Conv2D(64, 3, 1, activation='relu'))
->>>>>>> b2120334d6eb6efb7d2456a380314ff93f32c8a8
     model.add(TimeDistributed(Flatten()))
     model.add(TimeDistributed(Dropout(args.keep_prob)))
     model.add(TimeDistributed(Dense(units=32,   activation='relu')))
