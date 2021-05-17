@@ -5,6 +5,7 @@ import matplotlib.image as mpimg
 
 IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS, SEQUENCE_LEN = 160, 320, 3, 16
 INPUT_SHAPE = (IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS)
+REC_INPUT_SHAPE = (sequence_len, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS)
 
 
 def load_image(data_dir, image_file):
