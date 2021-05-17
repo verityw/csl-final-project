@@ -5,6 +5,7 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.layers import Lambda, Conv2D, MaxPooling2D, Dropout, Dense, Flatten
+from tensorflow.keras import losses
 from utils import INPUT_SHAPE, batch_generator, recurrent_batch_generator
 import argparse
 import os
@@ -58,12 +59,14 @@ def train_model(model, args, X_train, X_valid, y_train, y_valid):
             model.load_weights(args.checkpoint)
         except:
             print("Invalid checkpoint path. Please try again.")
-
-    model.compile(loss='mean_squared_error', optimizer=Adam(lr=args.learning_rate))
-
+    print("!!!!!!", X_train.shape)
+    # model.summary()
+    model.compile(loss="mean_squared_error", optimizer=Adam(lr=args.learning_rate))
+    model.summary()
     if args.model in ["RNN", "LSTM"]:
         # Train RNN
-        model.fit(x=recurrent_batch_generator(args.data_dir, X_train, y_train, args.batch_size, True),
+        gen = recurrent_batch_generator(args.data_dir, X_train, y_train, args.batch_size, True)
+        model.fit(x=gen,
                 steps_per_epoch=args.samples_per_epoch,
                 epochs=args.nb_epoch,
                 max_queue_size=1,
@@ -102,10 +105,10 @@ def main():
     parser.add_argument('-k', help='drop out probability',  dest='keep_prob',         type=float, default=0.5)
     parser.add_argument('-n', help='number of epochs',      dest='nb_epoch',          type=int,   default=10)
     parser.add_argument('-s', help='samples per epoch',     dest='samples_per_epoch', type=int,   default=20000)
-    parser.add_argument('-b', help='batch size',            dest='batch_size',        type=int,   default=40)
+    parser.add_argument('-b', help='batch size',            dest='batch_size',        type=int,   default=64)
     parser.add_argument('-o', help='save best models only', dest='save_best_only',    type=s2b,   default='true')
     parser.add_argument('-l', help='learning rate',         dest='learning_rate',     type=float, default=1.0e-4)
-    parser.add_argument('-m', help='model architecture',    dest='model',             type=str,   default="PilotNet", choices=["PilotNet", "SmallConvNet"])
+    parser.add_argument('-m', help='model architecture',    dest='model',             type=str,   default="PilotNet", choices=["PilotNet", "SmallConvNet", "RNN", "LSTM"])
     parser.add_argument('-c', help='load checkpoint',       dest='checkpoint',        type=str,   default="")
     args = parser.parse_args()
 

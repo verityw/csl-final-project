@@ -1,12 +1,26 @@
 import argparse
 import csv
+import numpy as np
 import os
 
-TIME_LOOKAHEAD = 2.0
+TIME_LOOKAHEAD = 0.1
 time_0 = 0
 
 def avg(nums):
     return sum(nums)/len(nums)
+
+def std(nums, mean): 
+    var = sum([((x - mean) ** 2) for x in nums]) / len(nums)
+    return var ** .5
+
+def median(nums):
+    a = np.array(nums)
+    return np.median(a)
+
+def iqr(nums):
+    a = np.array(nums)
+    lq, uq = np.percentile(a, [25, 75])
+    return (lq, uq)
 
 def str_to_time(timestamp):
     time_split = timestamp.split("_")
@@ -57,10 +71,13 @@ def main():
     data = get_time_and_steer(data_strings)
     smoothness = get_smoothness(data)
     maxs, means = get_metrics(smoothness)
-    print("MAX OF TIME MAXS: ", max(maxs))
-    print("MAX OF TIME MEANS: ", max(means))
-    print("MEAN OF TIME MAXS: ", avg(maxs))
-    print("MEAN OF TIME MEANS", avg(means))
+    # print("MAX OF TIME MAXS: ", max(maxs))
+    # print("MAX OF TIME MEANS: ", max(means))
+    # print("MEAN OF TIME MAXS: ", avg(maxs))
+    # print("STD OF MAXS: ", std(maxs, avg(maxs)))
+    print("MEDIAN OF MAXS: ", median(maxs))
+    print("IQR OF MAXS: ", iqr(maxs))
+    # print("MEAN OF TIME MEANS", avg(means))
 
 if __name__ == '__main__':
     main()

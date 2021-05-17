@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.image as mpimg
 
 
-IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS = 160, 320, 3
+IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS, SEQUENCE_LEN = 160, 320, 3, 16
 INPUT_SHAPE = (IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS)
 
 
@@ -160,15 +160,15 @@ def batch_generator(data_dir, image_paths, steering_angles, batch_size, is_train
                 break
         yield images, steers
 
-def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size, is_training, sequence_len=16):
-    images = np.empty([batch_size, sequence_len, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
-    steers = np.empty([batch_size,sequence_len])
+def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size, is_training):
+    images = np.empty([batch_size, SEQUENCE_LEN, IMAGE_HEIGHT, IMAGE_WIDTH, IMAGE_CHANNELS])
+    steers = np.empty([batch_size,SEQUENCE_LEN,1])
     while True:
         i = 0
         # Randomly choose if entire sequence will be center, left, or right
-        choice = np.np.random.choice(3)
-        for index in np.random.permutation(image_paths.shape[0] - (sequence_len - 1)):
-            for j in range(sequence_len):
+        choice = np.random.choice(3)
+        for index in np.random.permutation(image_paths.shape[0] - (SEQUENCE_LEN - 1)):
+            for j in range(SEQUENCE_LEN):
                 center, left, right = image_paths[index + j]
                 steering_angle = steering_angles[index + j]
                 if is_training and np.random.rand() < 0.6:
@@ -176,7 +176,7 @@ def recurrent_batch_generator(data_dir, image_paths, steering_angles, batch_size
                 else:
                     image = load_image(data_dir, center)
                     images[i, j] = preprocess(image)
-                    steers[i, j] = steering_angle
+                    steers[i, j, 0] = steering_angle
             i += 1
             if i == batch_size:
                 break

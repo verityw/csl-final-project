@@ -110,7 +110,6 @@ if __name__ == '__main__':
         nargs='?',
         default='',
         help='Path to image folder. This is where the images from the run will be saved.'
-<<<<<<< HEAD
     )
     # parser.add_argument(
     #     'is_rnn',
@@ -118,10 +117,6 @@ if __name__ == '__main__':
     #     nargs='?',
     #     help='Whether or not the loaded model is an RNN'
     # )
-=======
-    )    
-    
->>>>>>> b2120334d6eb6efb7d2456a380314ff93f32c8a8
     args = parser.parse_args()
     print(args.model)
     model = load_model(args.model)
